@@ -1,0 +1,65 @@
+{
+  "name": "eureka/eureka-appplication-web",
+  "description": "Web Application Eureka Framework - Template App",
+  "minimum-stability": "stable",
+  "type": "project",
+  "license": "MIT",
+
+  "authors": [
+    {
+      "name": "Romain Cottard",
+      "role": "Developer"
+    }
+  ],
+
+  "autoload": {
+    "psr-4": {
+      "Application\\": "./src",
+      "Application\\Script\\": "./scripts"
+    }
+  },
+
+  "autoload-dev": {
+    "psr-4": {
+      "Application\\Tests\\Unit\\": "./tests/unit"
+    }
+  },
+
+  "config": {
+    "sort-packages": true
+  },
+
+  "require": {
+    "php": "8.1.*||8.2.*||8.3.*",
+    "ext-json": "*",
+    "ext-pdo": "*",
+
+    "eureka/component-console": "^6.1.0",
+    "eureka/component-database": "^3.3.0",
+    "eureka/component-deployer": "^3.0.0",
+    "eureka/component-orm": "^6.0.2",
+    "eureka/component-web": "^6.0.0",
+    "eureka/kernel-http": "^6.0.0",
+    "eureka/kernel-console": "^6.0.0",
+    "lcobucci/clock": "^3.0.0",
+    "psr/container": "^2.0.2",
+    "psr/log": "^3.0.0",
+    "psr/http-message": "^2.0.0",
+    "psr/http-server-handler": "^1.0.2",
+    "psr/http-server-middleware": "^1.0.2",
+    "symfony/cache": "^6.4.7||^7.0.4",
+    "symfony/routing": "^6.4.7||^7.0.5",
+    "symfony/finder": "^6.4.7||^7.0.0",
+    "twig/twig": "^3.10.3"
+  },
+
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.58.1",
+    "maglnet/composer-require-checker": "^4.7.1",
+    "phpstan/phpstan": "^1.11.2",
+    "phpstan/phpstan-phpunit": "^1.4.0",
+    "phpunit/phpcov": "^9.0.2",
+    "phpunit/phpunit": "^10.5.20",
+    "shipmonk/composer-dependency-analyser": "^1.5.3"
+  }
+}

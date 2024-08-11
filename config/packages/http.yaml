@@ -2,17 +2,11 @@ services:
   _defaults:
     autowire: true
 
-  #~ Kernel Http & Component Http services
-  Eureka\Kernel\Http\:
-    resource: '../../vendor/eureka/kernel-http/src/*'
-    exclude:  '../../vendor/eureka/kernel-http/src/{Middleware,Application,Kernel.php}'
-
-  Eureka\Component\Http\:
-    resource: '../../vendor/eureka/component-http/src/*'
-
   #~ PSR-17 Factories
   Nyholm\Psr7\:
     resource: '../../vendor/nyholm/psr7/src/*'
+
+  Eureka\Component\Curl\HttpClient: ~
 
   Psr\Http\Client\ClientInterface:
     alias: Eureka\Component\Curl\HttpClient

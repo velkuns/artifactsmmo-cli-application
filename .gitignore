@@ -7,12 +7,6 @@ composer.lock
 config/secrets/*
 !config/secrets/.gitkeep
 
-#~ Statics
-node_modules/
-public/assets
-yarn.lock
-yarn-error.log
-
 #~ Application
 var/*
 !var/.gitkeep

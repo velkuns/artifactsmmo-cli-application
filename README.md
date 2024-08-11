@@ -1,5 +1,13 @@
-# eureka-application
-Template application for base web site.
+# Artifacts MMO CLI Application
+Application to play Artifacts MMO Game API
+
+
+## Scripts Available
+
+```bash
+bin/console character/view --name=CHARACTER_NAME
+```
+
 
 
 ## Contributing

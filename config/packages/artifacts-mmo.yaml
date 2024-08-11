@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+
+  Velkuns\ArtifactsMMO\Config\ArtifactsMMOConfig:
+    arguments:
+      $host:   'api.artifactsmmo.com'
+      $scheme: 'https'
+      $token:  '%api.token%'
+
+  Velkuns\ArtifactsMMO\Request\RequestBuilder: ~
+
+  Velkuns\ArtifactsMMO\Client\:
+    resource: '../../vendor/velkuns/artifactsmmo-client/src/Client/*'

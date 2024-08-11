@@ -3,7 +3,8 @@ services:
     autowire: true
 
   #~ PSR Clock
-  Application\Service\Clock\SystemClock: ~
+  Lcobucci\Clock\SystemClock:
+    factory: ['Lcobucci\Clock\SystemClock', 'fromUTC']
 
   #~ Date provider (time zone UTC & date time now UTC)
   application.date.time.zone.utc:

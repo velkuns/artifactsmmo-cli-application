@@ -9,7 +9,7 @@ use Application\VO\Item;
 class Consumables
 {
     /**
-     * @param array{1: Item\Consumable|null, 2?: Item\Consumable|null} $consumables
+     * @param array{1: Item\Consumable|null, 2: Item\Consumable|null} $consumables
      */
     public function __construct(public array $consumables) {}
 }

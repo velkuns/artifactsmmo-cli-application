@@ -4,7 +4,4 @@ declare(strict_types=1);
 
 namespace Application\VO\Item;
 
-class Amulet extends Item
-{
-    public string $type = 'amulet';
-}
+class Amulet extends Item {}

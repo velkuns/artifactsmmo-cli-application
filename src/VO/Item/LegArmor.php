@@ -4,7 +4,4 @@ declare(strict_types=1);
 
 namespace Application\VO\Item;
 
-class LegArmor extends Gear
-{
-    public string $type = 'leg_armor';
-}
+class LegArmor extends Gear {}

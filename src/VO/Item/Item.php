@@ -14,6 +14,7 @@ class Item
         public string $code,
         public string $name = '',
         public string $description = '',
+        public string $type = '',
         public string $subType = '',
         public int $level = 0,
         public int $hp = 0,

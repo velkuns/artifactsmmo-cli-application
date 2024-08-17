@@ -38,6 +38,6 @@ class Waiter
             $seconds--;
         }
 
-        echo "\n";
+        echo $progress->render("done !\n");
     }
 }

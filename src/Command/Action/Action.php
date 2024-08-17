@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Command;
+namespace Application\Command\Action;
 
-abstract class Command
+abstract class Action
 {
     /**
      * @param array<mixed> $arguments
@@ -19,6 +19,13 @@ abstract class Command
         $this->render();
 
         return \call_user_func_array($this->callable, $this->arguments);
+    }
+
+    public function simulate(): bool
+    {
+        $this->render();
+
+        return true;
     }
 
     private function render(): void

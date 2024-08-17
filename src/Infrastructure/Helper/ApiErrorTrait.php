@@ -24,14 +24,14 @@ trait ApiErrorTrait
             486 => new ActionInProgressException(),
             490 => new AlreadyAtDestinationException(),
             498 => new CharacterNotFoundException(),
-            499 => new CooldownException(),
+            499 => new CooldownException($exception->getMessage()),
             default => $exception,
         };
     }
 
     protected function getHttpCode(string $message): int
     {
-        if (!\str_starts_with($message, '[HTTP-')) {
+        if (!\str_starts_with($message, '[API-')) {
             return 0;
         }
 

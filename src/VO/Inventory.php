@@ -9,7 +9,7 @@ use Velkuns\ArtifactsMMO\VO\InventorySlot;
 class Inventory
 {
     /**
-     * @param list<InventorySlot> $inventory
+     * @param InventorySlot[] $inventory
      */
     public function __construct(public array $inventory, public int $size) {}
 }

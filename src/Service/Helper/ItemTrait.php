@@ -21,7 +21,6 @@ use Velkuns\ArtifactsMMO\VO\Item as ItemClientVO;
 
 trait ItemTrait
 {
-
     /**
      * @template T
      * @param class-string<T> $itemClass
@@ -35,6 +34,7 @@ trait ItemTrait
             $item->code,
             $item->name,
             $item->description,
+            $item->type,
             $item->subtype,
             $item->level,
             $this->getHpEffect($effects),

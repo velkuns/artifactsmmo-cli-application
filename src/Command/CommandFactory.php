@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Application\Command;
 
+use Application\Command\Action\Action;
+
 class CommandFactory
 {
     /**
-     * @template T of Command
+     * @template T of Action
      *
      * @param class-string<T> $commandClass
      * @param array<mixed> $arguments
@@ -17,7 +19,7 @@ class CommandFactory
         string $commandClass,
         \Closure $closure,
         array $arguments,
-    ): Command {
+    ): Action {
         return new $commandClass($closure, $arguments);
     }
 

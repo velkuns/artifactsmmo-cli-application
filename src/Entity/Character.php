@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Entity;
 
+use Application\Service\Waiter;
 use Application\VO\Cooldown;
 use Application\VO\Effect\Attack;
 use Application\VO\Effect\Damage;
@@ -14,6 +15,7 @@ use Application\VO\Item\Weapon;
 use Application\VO\Position;
 use Application\VO\Skills;
 use JsonException;
+use Psr\Clock\ClockInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Velkuns\ArtifactsMMO\Client\MyClient;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOClientException;
@@ -60,8 +62,44 @@ class Character
      */
     public function __construct(
         public readonly string $name,
-        public readonly MyClient $myClient,
+        private readonly MyClient $myClient,
+        private readonly ClockInterface $clock,
+        private readonly Waiter $waiter,
     ) {}
+
+    public function waitForCooldown(): void
+    {
+        $this->waiter->waitForCooldown(character: $this);
+    }
+
+    public function hasCooldown(): bool
+    {
+        $cooldownEnd = $this->cooldown->date;
+
+        if ($cooldownEnd === null) {
+            return false;
+        }
+
+        $now = $this->clock->now();
+
+        return $cooldownEnd > $now;
+    }
+
+    /**
+     * Get remaining cooldown seconds (rounded up)
+     */
+    public function getRemainingCooldown(): int
+    {
+        $cooldownEnd = $this->cooldown->date;
+
+        if ($cooldownEnd === null) {
+            return 0;
+        }
+
+        $time = $cooldownEnd->getTimestamp() - $this->clock->now()->getTimestamp();
+
+        return max($time, 0);
+    }
 
     /**
      * @throws ArtifactsMMOComponentException

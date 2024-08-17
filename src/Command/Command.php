@@ -6,14 +6,25 @@ namespace Application\Command;
 
 abstract class Command
 {
-    abstract public function isExecutable(): bool;
+    /**
+     * @param array<mixed> $arguments
+     */
+    public function __construct(
+        protected readonly \Closure $callable,
+        protected readonly array $arguments,
+    ) {}
 
     public function execute(): mixed
     {
-        if (!$this->isExecutable()) {
-            return false;
-        }
+        $this->render();
 
-        return \call_user_func($this->callable, $this->arguments);
+        return \call_user_func_array($this->callable, $this->arguments);
+    }
+
+    private function render(): void
+    {
+        $actionName = \basename(\str_replace('\\', '/', $this::class));
+        $args       = !empty($this->arguments) ? '(with args: ' . json_encode($this->arguments) . ')' : '';
+        echo "> $actionName $args\n";
     }
 }

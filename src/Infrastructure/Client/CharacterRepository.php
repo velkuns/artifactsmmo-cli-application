@@ -8,6 +8,7 @@ use Application\Entity\Character;
 use Application\Infrastructure\Helper\ApiErrorTrait;
 use Application\Service\Helper\ItemEffectTrait;
 use Application\Service\Helper\ItemTrait;
+use Application\Service\Waiter;
 use Application\VO\Cooldown;
 use Application\VO\Effect\Attack;
 use Application\VO\Effect\Damage;
@@ -18,6 +19,7 @@ use Application\VO\Position;
 use Application\VO\Skill;
 use Application\VO\Skills;
 use JsonException;
+use Psr\Clock\ClockInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Velkuns\ArtifactsMMO\Client\CharactersClient;
 use Velkuns\ArtifactsMMO\Client\MyClient;
@@ -34,6 +36,8 @@ class CharacterRepository
         private readonly CharactersClient $charactersClient,
         private readonly ItemRepository $itemRepository,
         private readonly MyClient $myClient,
+        private readonly Waiter $waiter,
+        private readonly ClockInterface $clock,
     ) {}
 
     /**
@@ -55,7 +59,7 @@ class CharacterRepository
         $char = $this->charactersClient->getCharacter($name);
 
         //~ Stats
-        $character = new Character($name, $this->myClient);
+        $character = new Character($name, $this->myClient, $this->clock, $this->waiter);
         $character->skin  = $char->skin;
         $character->hp    = $char->hp;
         $character->haste = $char->haste;

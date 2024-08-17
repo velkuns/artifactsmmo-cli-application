@@ -7,9 +7,10 @@ namespace Application\Service;
 use Application\Command;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\MapRepository;
+use Application\VO\Item\Item;
 use Application\VO\Position;
 
-class GatheringService
+class CraftingService
 {
     public function __construct(
         private readonly MapRepository $mapRepository,
@@ -19,9 +20,18 @@ class GatheringService
     /**
      * @throws \Throwable
      */
-    public function createGatheringCommands(Character $character, string $resource, int $quantity): Command\CommandList
+    public function createCraftingCommands(Character $character, string $resource, int $quantity): Command\CommandList
     {
-        $maps = $this->mapRepository->findResource($resource);
+        $commands = $this->commandFactory->newList();
+
+        $item = $this->itemRepository->findItem(Item::class, $code);
+
+        if ($item === null || $item->craft === null) {
+            return $commands;
+        }
+
+        $skillType = Skill
+        $skillType =
 
         $nearest = null;
         $minDistance = 0;

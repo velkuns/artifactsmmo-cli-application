@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace Application\Command;
 
-class Move extends Command {}
+class Craft extends Command {}

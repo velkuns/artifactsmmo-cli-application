@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Application\Script\Character;
 
+use Application\Command\CommandHandler;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Service\GatheringService;
 use Eureka\Component\Console\AbstractScript;
@@ -98,6 +99,8 @@ class Gathering extends AbstractScript
 
         $character = $this->characterRepository->findByName($name);
         $commands = $this->gatheringService->createGatheringCommands($character, $resource, $quantity);
-        var_dump($commands);
+
+        $handler = new CommandHandler($this->characterRepository);
+        $handler->handleList($character, $commands);
     }
 }

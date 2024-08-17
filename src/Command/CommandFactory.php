@@ -13,6 +13,13 @@ class CommandFactory
         private readonly ClockInterface $clock
     ) {}
 
+    /**
+     * @template T of Command
+     *
+     * @param class-string<T> $commandClass
+     * @param array<mixed> $arguments
+     * @return T
+     */
     public function new(
         string $commandClass,
         \Closure $closure,

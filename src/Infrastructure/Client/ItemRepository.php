@@ -19,6 +19,7 @@ class ItemRepository
     public function __construct(private readonly ItemsClient $client) {}
 
     /**
+     * @return list<Item\Item>
      * @throws \Throwable
      */
     public function findAllCraftableItem(string $craftSkill, int $maxLevel): array

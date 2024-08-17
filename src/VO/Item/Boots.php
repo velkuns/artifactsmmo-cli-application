@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Application\VO\Item;
 
-class Boots extends Armor
+class Boots extends Gear
 {
     public string $type = 'boots';
 }

@@ -15,6 +15,9 @@ use Eureka\Component\Console\Progress\ProgressBar;
 
 class ItemRenderer
 {
+    /**
+     * @param list<Item> $items
+     */
     public function renderAll(array $items): string
     {
         $buffer = '';
@@ -37,9 +40,9 @@ class ItemRenderer
             "Resistance: {$this->element($item->resistance, '%')}\n" .
             "Damage:     {$this->element($item->damage, '%')}\n" .
             "--------------------------------------------------\n" .
-            "Craft ({$item->craft->skill}): \n" .
-            " . lvl: {$item->craft->level}\n" .
-            " . qty: {$item->craft->level}\n" .
+            "Craft ({$item->craft?->skill}): \n" .
+            " . lvl: {$item->craft?->level}\n" .
+            " . qty: {$item->craft?->level}\n" .
             " . items: [...]\n" .
             "--------------------------------------------------\n"
         ;

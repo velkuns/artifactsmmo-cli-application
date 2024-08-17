@@ -12,9 +12,7 @@ declare(strict_types=1);
 namespace Application\Script\Character;
 
 use Application\Infrastructure\Client\CharacterRepository;
-use Application\Service\Renderer\CharacterRenderer;
-use Application\Service\Renderer\ItemRenderer;
-use Application\Service\UpgradeEquipmentService;
+use Application\Service\GatheringService;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -26,13 +24,13 @@ use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;
 /**
  * @codeCoverageIgnore
  */
-class View extends AbstractScript
+class Gathering extends AbstractScript
 {
     public function __construct(
         private readonly CharacterRepository $characterRepository,
-        private readonly UpgradeEquipmentService $upgradeEquipmentService,
+        private readonly GatheringService $gatheringService,
     ) {
-        $this->setDescription('Example script');
+        $this->setDescription('Gathering task');
         $this->setExecutable();
 
         $this->initOptions(
@@ -44,7 +42,27 @@ class View extends AbstractScript
                         description: 'Character name',
                         mandatory: true,
                         hasArgument: true,
+                        default: 'natsu',
+                    ),
+                )
+                ->add(
+                    new Option(
+                        shortName: 'r',
+                        longName: 'resource',
+                        description: 'Resource code to gather',
+                        mandatory: true,
+                        hasArgument: true,
                         default: null,
+                    ),
+                )
+                ->add(
+                    new Option(
+                        shortName: 'q',
+                        longName: 'quantity',
+                        description: 'Quantity of the resource to gather',
+                        mandatory: true,
+                        hasArgument: true,
+                        default: 1,
                     ),
                 ),
         );
@@ -69,16 +87,17 @@ class View extends AbstractScript
      */
     public function run(): void
     {
-        $name = (string) $this->options()->value('n', 'name');
+        $name     = (string) $this->options()->value('n', 'name');
+        $resource = (string) $this->options()->value('r', 'resource');
+        $quantity = (int) $this->options()->value('q', 'quantity');
+
 
         if (empty($name)) {
             throw new \UnexpectedValueException('Name is missing!');
         }
 
         $character = $this->characterRepository->findByName($name);
-        $items = $this->upgradeEquipmentService->needUpgradeWeapon($character);
-
-        echo (new CharacterRenderer())->render($character);
-        echo (new ItemRenderer())->renderAll($items);
+        $commands = $this->gatheringService->createGatheringCommands($character, $resource, $quantity);
+        var_dump($commands);
     }
 }

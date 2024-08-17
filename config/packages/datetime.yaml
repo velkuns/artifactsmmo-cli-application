@@ -6,6 +6,9 @@ services:
   Lcobucci\Clock\SystemClock:
     factory: ['Lcobucci\Clock\SystemClock', 'fromUTC']
 
+  Psr\Clock\ClockInterface:
+    alias: 'Lcobucci\Clock\SystemClock'
+
   #~ Date provider (time zone UTC & date time now UTC)
   application.date.time.zone.utc:
     class: DateTimeZone

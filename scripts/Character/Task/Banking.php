@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace Application\Script\Character;
+namespace Application\Script\Character\Task;
 
-use Application\Task\TaskHandler;
-use Application\Task\Task;
-use Application\Task\Task\Banking as BankingService;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
+use Application\Task\Task;
+use Application\Task\Task\Banking as BankingService;
+use Application\Task\TaskHandler;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;

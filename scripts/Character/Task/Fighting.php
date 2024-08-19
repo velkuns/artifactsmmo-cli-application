@@ -9,13 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Application\Script\Character;
+namespace Application\Script\Character\Task;
 
-use Application\Task\TaskHandler;
-use Application\Task\Task\Crafting as CraftingService;
-use Application\Task\Task\Equipping;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
+use Application\Task\Task\Fighting as FightingService;
+use Application\Task\TaskHandler;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -27,15 +26,14 @@ use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;
 /**
  * @codeCoverageIgnore
  */
-class Crafting extends AbstractScript
+class Fighting extends AbstractScript
 {
     use CharacterTrait;
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
         private readonly TaskHandler $taskHandler,
-        private readonly CraftingService $crafting,
-        private readonly Equipping $equipping,
+        private readonly FightingService $fighting,
     ) {
         $this->setDescription('Gathering task');
         $this->setExecutable();
@@ -43,9 +41,8 @@ class Crafting extends AbstractScript
         $this->initOptions(
             (new Options())
                 ->add(new Option(shortName: 'n', longName: 'name', description: 'Character name', mandatory: true, hasArgument: true, default: 'natsu'))
-                ->add(new Option(shortName: 'i', longName: 'item', description: 'Item code to craft', mandatory: true, hasArgument: true, default: null))
-                ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of the resource to gather', mandatory: true, hasArgument: true, default: 1))
-                ->add(new Option(shortName: 'e', longName: 'equip', description: 'Equip the element crafted', mandatory: false, hasArgument: false, default: false))
+                ->add(new Option(shortName: 'r', longName: 'monster', description: 'Monster to fight', mandatory: true, hasArgument: true, default: null))
+                ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of monster to fight', mandatory: true, hasArgument: true, default: 1))
                 ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
     }
@@ -69,16 +66,11 @@ class Crafting extends AbstractScript
      */
     public function run(): void
     {
-        $code     = (string) $this->options()->value('i', 'item');
+        $monster  = (string) $this->options()->value('m', 'monster');
         $quantity = (int) $this->options()->value('q', 'quantity');
-        $doEquip  = (bool) $this->options()->value('e', 'equip');
 
         $character = $this->getCharacter($this->options(), $this->characterRepository);
-        $task      = $this->crafting->createTask($character, $code, $quantity);
-
-        if ($doEquip) {
-            $task->enqueueAll($this->equipping->createTask($character, $code, true)); // Add equipments
-        }
+        $task      = $this->fighting->createTask($character, $monster, $quantity);
 
         $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
     }

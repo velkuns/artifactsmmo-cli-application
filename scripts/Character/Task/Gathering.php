@@ -70,7 +70,7 @@ class Gathering extends AbstractScript
         $quantity = (int) $this->options()->value('q', 'quantity');
 
         $character = $this->getCharacter($this->options(), $this->characterRepository);
-        $task      = $this->gathering->createTask($character, $resource, $quantity);
+        $task      = $this->gathering->createTaskForDrop($character, $resource, $quantity);
 
         $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
     }

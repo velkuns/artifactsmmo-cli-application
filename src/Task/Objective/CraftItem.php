@@ -11,7 +11,6 @@ use Application\Service\Helper\InventoryTrait;
 use Application\Task;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\ItemRepository;
-use Application\Service\Helper\MapTrait;
 use Application\Task\Task\Fighting;
 use Application\VO\Item\Item;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -23,7 +22,6 @@ class CraftItem
 {
     use BankTrait;
     use InventoryTrait;
-    use MapTrait;
 
     public function __construct(
         private readonly ItemRepository $itemRepository,

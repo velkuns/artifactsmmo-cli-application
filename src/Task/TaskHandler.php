@@ -31,21 +31,25 @@ class TaskHandler
         $task->rewind();
 
         while (!$task->isEmpty()) {
-            try {
-                /** @var Action $action */
-                $action = $task->dequeue();
-                do {
+            /** @var Action $action */
+            $action = $task->dequeue();
+
+            do {
+                $retryAfterCooldown = false;
+                try {
                     $character = $this->actionHandler->handle($character, $action, $simulate);
-                } while ($action->repeatable($character) && $simulate === false);
-
-                if ($simulate === true) {
-                    echo " --> No repeatable action due to simulation mode [ON].\n";
+                } catch (CoolDownException $exception) {
+                    echo "Cooldown not finished (remaining time: {$exception->getCooldown()}s)!\n";
+                    $this->waiter->wait($exception->getCooldownAsInt());
+                    $retryAfterCooldown = true;
                 }
+            } while ($retryAfterCooldown || ($action->repeatable($character) && $simulate === false));
 
-                $task->next();
-            } catch (CoolDownException $exception) {
-                $this->waiter->wait($exception->getCooldownAsInt());
+            if ($simulate && $action->repeatable($character)) {
+                echo " --> No repeatable action due to simulation mode [ON].\n";
             }
+
+            $task->next();
         }
     }
 }

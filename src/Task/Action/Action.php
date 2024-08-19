@@ -50,8 +50,10 @@ abstract class Action
             return false;
         }
 
-        $func = $this->repeatableCondition;
-        return (bool) $func($character, ...$this->argumentsForRepeatableCondition);
+        $func   = $this->repeatableCondition;
+        $result = $func($character, ...$this->argumentsForRepeatableCondition);
+
+        return (bool) $result;
     }
 
     private function render(): void

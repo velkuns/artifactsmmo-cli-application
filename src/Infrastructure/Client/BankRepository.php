@@ -46,7 +46,11 @@ class BankRepository
      */
     public function getItem(string $code): array
     {
-        return $this->myClient->getBankItems(['item_code' => $code]);
+        try {
+            return $this->myClient->getBankItems(['item_code' => $code]);
+        } catch (\Throwable $exception) {
+            throw $this->handleApiException($exception);
+        }
     }
 
     /**
@@ -60,7 +64,11 @@ class BankRepository
      */
     public function getItems(): array
     {
-        return $this->myClient->getBankItems();
+        try {
+            return $this->myClient->getBankItems();
+        } catch (\Throwable $exception) {
+            throw $this->handleApiException($exception);
+        }
     }
 
 }

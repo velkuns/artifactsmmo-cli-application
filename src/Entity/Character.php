@@ -123,6 +123,10 @@ class Character
 
         $time = $cooldownEnd->getTimestamp() - $this->clock->now()->getTimestamp();
 
+        if ($time > 0) {
+            $time = $this->cooldown->cooldown;
+        }
+
         return max($time, 0);
     }
 

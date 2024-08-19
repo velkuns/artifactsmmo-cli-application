@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Application\Service;
+namespace Application\Task\Task;
 
-use Application\Command;
+use Application\Task;
 use Application\Entity\Character;
 use Application\Enum\SkillType;
 use Application\Infrastructure\Client\ItemRepository;
 use Application\Infrastructure\Client\MapRepository;
 use Application\Service\Helper\MapTrait;
-use Application\Service\Helper\MathTrait;
 use Application\VO\Item\Item;
-use Application\VO\Position;
 
 class Crafting
 {
@@ -21,35 +19,35 @@ class Crafting
     public function __construct(
         private readonly MapRepository $mapRepository,
         private readonly ItemRepository $itemRepository,
-        private readonly Command\CommandFactory $commandFactory,
+        private readonly Task\ActionFactory $actionFactory,
     ) {}
 
     /**
      * @throws \Throwable
      */
-    public function createCommands(Character $character, string $code, int $quantity): Command\CommandList
+    public function createTask(Character $character, string $code, int $quantity): Task\Task
     {
-        $commands = $this->commandFactory->newList();
+        $task = $this->actionFactory->newTask();
 
         $item = $this->itemRepository->findItem(Item::class, $code);
 
         if ($item === null || $item->craft === null) {
-            return $commands;
+            return $task;
         }
 
         try {
             $skillType = SkillType::from($item->craft->skill);
         } catch (\TypeError) {
-            return $commands;
+            return $task;
         }
 
         //~ Handle move if necessary
-        $commands = $this->handleMove($character, $this->mapRepository->findWorkshop($skillType->value), $commands);
+        $task = $this->handleMove($character, $this->mapRepository->findWorkshop($skillType->value), $task);
 
         //~ Then enqueue main action
-        $command = $this->commandFactory->new(Command\Action\Craft::class, $character->craft(...), [$code, $quantity]);
-        $commands->enqueue($command);
+        $action = $this->actionFactory->craft($character, $code, $quantity);
+        $task->enqueue($action);
 
-        return $commands;
+        return $task;
     }
 }

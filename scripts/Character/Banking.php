@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace Application\Script\Character;
 
-use Application\Command\CommandHandler;
-use Application\Command\CommandList;
+use Application\Task\TaskHandler;
+use Application\Task\Task;
+use Application\Task\Task\Banking as BankingService;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
-use Application\Service\Banking as BankingService;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -34,7 +34,7 @@ class Banking extends AbstractScript
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
-        private readonly CommandHandler $commandHandler,
+        private readonly TaskHandler $taskHandler,
         private readonly BankingService $banking,
     ) {
         $this->setDescription('Gathering task');
@@ -86,12 +86,12 @@ class Banking extends AbstractScript
         $character = $this->getCharacter($this->options(), $this->characterRepository);
 
         if ($isGold) {
-            $commands = $this->handleGolds($character, $isWithdraw, $isAll, $quantity);
+            $task = $this->handleGolds($character, $isWithdraw, $isAll, $quantity);
         } else {
-            $commands = $this->handleItems($character, $isWithdraw, $isAll, $quantity);
+            $task = $this->handleItems($character, $isWithdraw, $isAll, $quantity);
         }
 
-        $this->commandHandler->handleList($character, $commands, $this->isSimulation($this->options()));
+        $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
     }
 
     /**
@@ -101,13 +101,13 @@ class Banking extends AbstractScript
      * @throws ArtifactsMMOClientException
      * @throws \JsonException
      */
-    private function handleGolds(Character $character, bool $isWithdraw, bool $isAll, int $quantity): CommandList
+    private function handleGolds(Character $character, bool $isWithdraw, bool $isAll, int $quantity): Task
     {
         if ($isWithdraw) {
-            return $this->banking->createWithdrawGoldCommands($character, $quantity, $isAll);
+            return $this->banking->createWithdrawGoldTask($character, $quantity, $isAll);
         }
 
-        return $this->banking->createDepositGoldCommands($character, $quantity, $isAll);
+        return $this->banking->createDepositGoldTask($character, $quantity, $isAll);
     }
 
     /**
@@ -117,20 +117,20 @@ class Banking extends AbstractScript
      * @throws ArtifactsMMOClientException
      * @throws \JsonException
      */
-    private function handleItems(Character $character, bool $isWithdraw, bool $isAll, int $quantity): CommandList
+    private function handleItems(Character $character, bool $isWithdraw, bool $isAll, int $quantity): Task
     {
         $item  = (string) $this->options()->value('i', 'item');
 
         if ($isWithdraw) {
-            return $this->banking->createWithdrawItemCommands($character, $item, $quantity);
+            return $this->banking->createWithdrawItemTask($character, $item, $quantity);
         }
 
         if ($isAll && empty($item)) {
-            return $this->banking->createDepositAllItemsCommands($character);
+            return $this->banking->createDepositAllItemsTask($character);
         }
 
         //~ TODO: handle all quantity on inventory item
 
-        return $this->banking->createDepositItemCommands($character, $item, $quantity);
+        return $this->banking->createDepositItemTask($character, $item, $quantity);
     }
 }

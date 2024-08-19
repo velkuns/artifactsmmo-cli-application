@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Application\Command\Action;
+namespace Application\Task\Action;
 
 class DepositItems extends Action {}

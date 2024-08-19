@@ -12,7 +12,7 @@ class ItemCraft
      * @param string $skill
      * @param int $level
      * @param int $quantity
-     * @param list<SimpleItem> $items
+     * @param SimpleItem[] $items
      */
     public function __construct(
         public readonly string $skill,

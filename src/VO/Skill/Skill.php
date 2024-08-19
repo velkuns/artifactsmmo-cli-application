@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\VO;
+namespace Application\VO\Skill;
 
 class Skill
 {

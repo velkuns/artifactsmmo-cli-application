@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Application\Service;
+namespace Application\Task\Task;
 
-use Application\Command;
-use Application\Command\Action;
+use Application\Task;
+use Application\Task\Action;
 use Application\Entity\Character;
 use Application\Enum\ItemType;
 use Application\Enum\Slot;
@@ -15,20 +15,20 @@ use Application\VO\Item\Item;
 class Equipping
 {
     public function __construct(
-        private readonly Command\CommandFactory $commandFactory,
+        private readonly Task\ActionFactory $actionFactory,
         private readonly ItemRepository $itemRepository,
     ) {}
 
     /**
      * @throws \Throwable
      */
-    public function createCommands(Character $character, string $code, bool $forceUnequip = false): Command\CommandList
+    public function createTask(Character $character, string $code, bool $forceUnequip = false): Task\Task
     {
-        $commands = $this->commandFactory->newList();
+        $task = $this->actionFactory->newTask();
 
         $item = $this->itemRepository->findItem(Item::class, $code);
         if ($item === null) {
-            return $commands;
+            return $task;
         }
 
         $slots = ItemType::from($item->type)->slot();
@@ -45,21 +45,21 @@ class Equipping
         Item $item,
         Slot $slot,
         bool $forceUnequip,
-    ): Command\CommandList {
+    ): Task\Task {
         echo "handle unique slot !\n";
-        $commands = $this->commandFactory->newList();
+        $task = $this->actionFactory->newTask();
 
         $hasEquipment = $character->hasEquipment($slot);
         if ($forceUnequip && $hasEquipment) {
-            $commands->enqueue($this->commandFactory->new(Action\Unequip::class, $character->unequip(...), [$slot]));
+            $task->enqueue($this->actionFactory->new(Action\Unequip::class, $character->unequip(...), [$slot]));
             $hasEquipment = false;
         }
 
         if (!$hasEquipment) {
-            $commands->enqueue($this->commandFactory->new(Action\Equip::class, $character->equip(...), [$slot, $item->code]));
+            $task->enqueue($this->actionFactory->new(Action\Equip::class, $character->equip(...), [$slot, $item->code]));
         }
 
-        return $commands;
+        return $task;
     }
 
     /**
@@ -70,9 +70,9 @@ class Equipping
         Item $item,
         array $slots,
         bool $forceUnequip,
-    ): Command\CommandList {
+    ): Task\Task {
         echo "handle multiple slots !\n";
-        $commands = $this->commandFactory->newList();
+        $task = $this->actionFactory->newTask();
 
         $freeSlot = null;
         foreach ($slots as $slot) {
@@ -84,13 +84,13 @@ class Equipping
 
         if ($forceUnequip && $freeSlot === null) {
             $freeSlot = \reset($slots);
-            $commands->enqueue($this->commandFactory->new(Action\Unequip::class, $character->unequip(...), [$freeSlot]));
+            $task->enqueue($this->actionFactory->new(Action\Unequip::class, $character->unequip(...), [$freeSlot]));
         }
 
         if ($freeSlot !== null) {
-            $commands->enqueue($this->commandFactory->new(Action\Equip::class, $character->equip(...), [$freeSlot, $item->code]));
+            $task->enqueue($this->actionFactory->new(Action\Equip::class, $character->equip(...), [$freeSlot, $item->code]));
         }
 
-        return $commands;
+        return $task;
     }
 }

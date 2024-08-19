@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Application\VO\Item;
 
+use Application\Entity\Character;
+use Application\Enum\SkillType;
 use Application\VO\Effect\Attack;
 use Application\VO\Effect\Damage;
 use Application\VO\Effect\Resistance;
@@ -24,4 +26,23 @@ class Item
         public Damage|null $damage = null,
         public ItemCraft|null $craft = null,
     ) {}
+
+    public function craftableBy(Character $character): bool
+    {
+        if ($this->craft === null) {
+            return false;
+        }
+
+        try {
+            $skillType = SkillType::from($this->craft->skill);
+        } catch (\TypeError) {
+            return false;
+        }
+
+        if (!$character->skills->hasLevel($skillType, $this->craft->level)) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Application\Script\Character;
 
-use Application\Command\CommandHandler;
+use Application\Task\TaskHandler;
+use Application\Task\Task\Fighting as FightingService;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
-use Application\Service\Fighting as FightingService;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -32,7 +32,7 @@ class Fighting extends AbstractScript
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
-        private readonly CommandHandler $commandHandler,
+        private readonly TaskHandler $taskHandler,
         private readonly FightingService $fighting,
     ) {
         $this->setDescription('Gathering task');
@@ -70,8 +70,8 @@ class Fighting extends AbstractScript
         $quantity = (int) $this->options()->value('q', 'quantity');
 
         $character = $this->getCharacter($this->options(), $this->characterRepository);
-        $commands  = $this->fighting->createCommands($character, $monster, $quantity);
+        $task      = $this->fighting->createTask($character, $monster, $quantity);
 
-        $this->commandHandler->handleList($character, $commands, $this->isSimulation($this->options()));
+        $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
     }
 }

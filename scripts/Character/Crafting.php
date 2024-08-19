@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 namespace Application\Script\Character;
 
-use Application\Command\CommandHandler;
+use Application\Task\TaskHandler;
+use Application\Task\Task\Crafting as CraftingService;
+use Application\Task\Task\Equipping;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
-use Application\Service\Crafting as CraftingService;
-use Application\Service\Equipping;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -33,7 +33,7 @@ class Crafting extends AbstractScript
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
-        private readonly CommandHandler $commandHandler,
+        private readonly TaskHandler $taskHandler,
         private readonly CraftingService $crafting,
         private readonly Equipping $equipping,
     ) {
@@ -74,12 +74,12 @@ class Crafting extends AbstractScript
         $doEquip  = (bool) $this->options()->value('e', 'equip');
 
         $character = $this->getCharacter($this->options(), $this->characterRepository);
-        $commands  = $this->crafting->createCommands($character, $code, $quantity);
+        $task      = $this->crafting->createTask($character, $code, $quantity);
 
         if ($doEquip) {
-            $commands->enqueueAll($this->equipping->createCommands($character, $code, true)); // Add equipments
+            $task->enqueueAll($this->equipping->createTask($character, $code, true)); // Add equipments
         }
 
-        $this->commandHandler->handleList($character, $commands, $this->isSimulation($this->options()));
+        $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
     }
 }

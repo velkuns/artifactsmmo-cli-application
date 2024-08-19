@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Service;
 
-use Application\Command;
+use Application\Task;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\MapRepository;
 use Application\VO\Position;

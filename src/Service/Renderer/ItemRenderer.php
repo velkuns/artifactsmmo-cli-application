@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace Application\Service\Renderer;
 
-use Application\Entity\Character;
 use Application\VO\Elements;
 use Application\VO\Item\Item;
-use Application\VO\Item\Weapon;
-use Application\VO\Skill;
-use Application\VO\Skills;
-use Eureka\Component\Console\Option\Options;
-use Eureka\Component\Console\Progress\ProgressBar;
 
 class ItemRenderer
 {

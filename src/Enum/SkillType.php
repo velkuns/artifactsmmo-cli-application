@@ -8,6 +8,7 @@ enum SkillType: string
 {
     case Cooking = 'cooking';
     case Mining = 'mining';
+    case Fishing = 'fishing';
     case WoodCutting = 'woodcutting';
     case WeaponCrafting = 'weaponcrafting';
     case GearCrafting = 'gearcrafting';

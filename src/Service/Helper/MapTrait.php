@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Application\Service\Helper;
 
-use Application\Command\Action;
-use Application\Command\CommandList;
+use Application\Task\Action;
+use Application\Task\Task;
 use Application\Entity\Character;
 use Application\VO\Position;
 use Velkuns\ArtifactsMMO\VO\Map;
@@ -18,16 +18,16 @@ trait MapTrait
      * @param Map[] $maps
      * @throws \Exception
      */
-    private function handleMove(Character $character, array $maps, CommandList $commands): CommandList
+    private function handleMove(Character $character, array $maps, Task $task): Task
     {
         [$position, $minDistance] = $this->findNearest($character, $maps);
 
         if ($minDistance > 0 && $position !== null) {
-            $command = $this->commandFactory->new(Action\Move::class, $character->move(...), [$position]);
-            $commands->enqueue($command);
+            $action = $this->actionFactory->new(Action\Move::class, $character->move(...), [$position]);
+            $task->enqueue($action);
         }
 
-        return $commands;
+        return $task;
     }
 
     /**

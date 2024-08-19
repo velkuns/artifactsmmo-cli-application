@@ -35,6 +35,6 @@ trait ApiErrorTrait
             return 0;
         }
 
-        return (int) \substr($message, 6, 3);
+        return (int) \substr($message, 5, 3);
     }
 }

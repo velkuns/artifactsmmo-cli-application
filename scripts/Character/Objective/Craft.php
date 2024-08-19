@@ -9,11 +9,12 @@
 
 declare(strict_types=1);
 
-namespace Application\Script\Character;
+namespace Application\Script\Character\Objective;
 
+use Application\Task\Objective;
+use Application\Task\ObjectiveHandler;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
-use Application\Service\Renderer\CharacterRenderer;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -25,19 +26,24 @@ use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;
 /**
  * @codeCoverageIgnore
  */
-class View extends AbstractScript
+class Craft extends AbstractScript
 {
     use CharacterTrait;
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
+        private readonly ObjectiveHandler $objectiveHandler,
+        private readonly Objective\CraftItem $craftItem,
     ) {
-        $this->setDescription('Example script');
+        $this->setDescription('Craft item as objective');
         $this->setExecutable();
 
         $this->initOptions(
             (new Options())
                 ->add(new Option(shortName: 'n', longName: 'name', description: 'Character name', mandatory: true, hasArgument: true, default: 'natsu'))
+                ->add(new Option(shortName: 'i', longName: 'item', description: 'Item code to craft', mandatory: true, hasArgument: true, default: null))
+                ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of the item to craft', mandatory: true, hasArgument: true, default: 1))
+                ->add(new Option(shortName: 'e', longName: 'equip', description: 'Equip the element crafted', mandatory: false, hasArgument: false, default: false))
                 ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
     }
@@ -64,6 +70,11 @@ class View extends AbstractScript
         $character = $this->getCharacter($this->options(), $this->characterRepository);
         $simulate  = $this->isSimulation($this->options());
 
-        echo (new CharacterRenderer())->render($character);
+        $code     = (string) $this->options()->value('i', 'item');
+        $quantity = (int) $this->options()->value('q', 'quantity');
+        $doEquip  = (bool) $this->options()->value('e', 'equip');
+
+        $objective = $this->craftItem->createObjective($character, $code, $quantity, $doEquip);
+        $this->objectiveHandler->handle($character, $objective, $simulate);
     }
 }

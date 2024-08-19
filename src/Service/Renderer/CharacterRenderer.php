@@ -7,8 +7,8 @@ namespace Application\Service\Renderer;
 use Application\Entity\Character;
 use Application\VO\Elements;
 use Application\VO\Item\Weapon;
-use Application\VO\Skill;
-use Application\VO\Skills;
+use Application\VO\Skill\Skill;
+use Application\VO\Skill\Skills;
 use Eureka\Component\Console\Option\Options;
 use Eureka\Component\Console\Progress\ProgressBar;
 

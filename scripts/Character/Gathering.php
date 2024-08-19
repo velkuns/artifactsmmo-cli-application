@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Application\Script\Character;
 
-use Application\Command\CommandHandler;
+use Application\Task\TaskHandler;
+use Application\Task\Task\Gathering as GatheringService;
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
-use Application\Service\Gathering as GatheringService;
 use Eureka\Component\Console\AbstractScript;
 use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
@@ -32,7 +32,7 @@ class Gathering extends AbstractScript
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
-        private readonly CommandHandler $commandHandler,
+        private readonly TaskHandler $taskHandler,
         private readonly GatheringService $gathering,
     ) {
         $this->setDescription('Gathering task');
@@ -70,8 +70,8 @@ class Gathering extends AbstractScript
         $quantity = (int) $this->options()->value('q', 'quantity');
 
         $character = $this->getCharacter($this->options(), $this->characterRepository);
-        $commands  = $this->gathering->createCommands($character, $resource, $quantity);
+        $task      = $this->gathering->createTask($character, $resource, $quantity);
 
-        $this->commandHandler->handleList($character, $commands, $this->isSimulation($this->options()));
+        $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
     }
 }

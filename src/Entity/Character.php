@@ -14,7 +14,7 @@ use Application\VO\Equipment;
 use Application\VO\Inventory;
 use Application\VO\Item\Weapon;
 use Application\VO\Position;
-use Application\VO\Skills;
+use Application\VO\Skill\Skills;
 use JsonException;
 use Psr\Clock\ClockInterface;
 use Psr\Http\Client\ClientExceptionInterface;

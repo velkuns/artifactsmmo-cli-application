@@ -44,18 +44,9 @@ class Craft extends AbstractScript
                 ->add(new Option(shortName: 'i', longName: 'item', description: 'Item code to craft', mandatory: true, hasArgument: true, default: null))
                 ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of the item to craft', mandatory: true, hasArgument: true, default: 1))
                 ->add(new Option(shortName: 'e', longName: 'equip', description: 'Equip the element crafted', mandatory: false, hasArgument: false, default: false))
-                ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
+                ->add(new Option(shortName: 's', longName: 'sell', description: 'Sell the element crafted on G.E', mandatory: false, hasArgument: false, default: false))
+                ->add(new Option(shortName: '', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
-    }
-
-    public function help(): void
-    {
-        (new Help(
-            substr(self::class, (int) strrpos(self::class, '\\') + 1),
-            $this->declaredOptions(),
-            $this->output(),
-            $this->options(),
-        ))->display();
     }
 
     /**
@@ -73,8 +64,9 @@ class Craft extends AbstractScript
         $code     = (string) $this->options()->value('i', 'item');
         $quantity = (int) $this->options()->value('q', 'quantity');
         $doEquip  = (bool) $this->options()->value('e', 'equip');
+        $doSell   = (bool) $this->options()->value('s', 'sell');
 
-        $objective = $this->craftItem->createObjective($character, $code, $quantity, $doEquip);
+        $objective = $this->craftItem->createObjective($character, $code, $quantity, $doEquip, $doSell);
         $this->objectiveHandler->handle($character, $objective, $simulate);
     }
 }

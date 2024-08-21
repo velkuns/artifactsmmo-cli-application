@@ -15,7 +15,6 @@ use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
 use Application\Service\Renderer\CharacterRenderer;
 use Eureka\Component\Console\AbstractScript;
-use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
 use Eureka\Component\Console\Option\Options;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -32,24 +31,14 @@ class View extends AbstractScript
     public function __construct(
         private readonly CharacterRepository $characterRepository,
     ) {
-        $this->setDescription('Example script');
+        $this->setDescription('View character info');
         $this->setExecutable();
 
         $this->initOptions(
             (new Options())
                 ->add(new Option(shortName: 'n', longName: 'name', description: 'Character name', mandatory: true, hasArgument: true, default: 'natsu'))
-                ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
+                ->add(new Option(shortName: null, longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
-    }
-
-    public function help(): void
-    {
-        (new Help(
-            substr(self::class, (int) strrpos(self::class, '\\') + 1),
-            $this->declaredOptions(),
-            $this->output(),
-            $this->options(),
-        ))->display();
     }
 
     /**

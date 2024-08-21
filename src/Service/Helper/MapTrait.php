@@ -20,33 +20,34 @@ trait MapTrait
      */
     private function handleMove(Character $character, array $maps, Task $task): Task
     {
-        [$position, $minDistance] = $this->findNearest($character, $maps);
+        $map = $this->findNearest($character, $maps);
 
-        if ($minDistance > 0 && $position !== null) {
-            $action = $this->actionFactory->new(Action\Move::class, $character->move(...), [$position]);
-            $task->enqueue($action);
-        }
+        $action = $this->actionFactory->move($character, new Position($map->x, $map->y), $map);
+        $task->enqueue($action);
 
         return $task;
     }
 
     /**
      * @param Map[] $maps
-     * @return array{0: Position|null, 1: int}
      * @throws \Exception
      */
-    private function findNearest(Character $character, array $maps): array
+    private function findNearest(Character $character, array $maps): Map
     {
         $nearest     = null;
         $minDistance = 0;
         foreach ($maps as $map) {
             $distance = $this->distance($character->position, new Position($map->x, $map->y));
             if ($nearest === null || $distance < $minDistance) {
-                $nearest     = new Position($map->x, $map->y);
+                $nearest     = $map;
                 $minDistance = $distance;
             }
         }
 
-        return [$nearest, $minDistance];
+        if ($nearest === null) {
+            throw new \UnexpectedValueException('No nearest map found');
+        }
+
+        return $nearest;
     }
 }

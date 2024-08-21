@@ -35,6 +35,7 @@ class CharacterRepository
     public function __construct(
         private readonly CharactersClient $charactersClient,
         private readonly ItemRepository $itemRepository,
+        private readonly GrandExchangeRepository $grandExchangeRepository,
         private readonly MyClient $myClient,
         private readonly Waiter $waiter,
         private readonly ClockInterface $clock,
@@ -59,7 +60,7 @@ class CharacterRepository
         $char = $this->charactersClient->getCharacter($name);
 
         //~ Stats
-        $character = new Character($name, $this->myClient, $this->clock, $this->waiter);
+        $character = new Character($name, $this->myClient, $this->grandExchangeRepository, $this->clock, $this->waiter);
         $character->skin  = $char->skin;
         $character->hp    = $char->hp;
         $character->haste = $char->haste;

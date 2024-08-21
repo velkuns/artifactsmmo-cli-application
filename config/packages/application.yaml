@@ -7,3 +7,11 @@ services:
   #~ Application source code
   Application\:
     resource: '../../src/*'
+
+  console.output.stdout:
+    class:   'Eureka\Component\Console\Output\StreamOutput'
+    factory: ['Application\Service\OutputFactory', 'stdout']
+
+  Eureka\Component\Console\Terminal\Terminal:
+    arguments:
+      $output: '@console.output.stdout'

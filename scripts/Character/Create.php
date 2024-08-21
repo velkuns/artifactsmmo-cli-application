@@ -9,40 +9,38 @@
 
 declare(strict_types=1);
 
-namespace Application\Script\Character\Task;
+namespace Application\Script\Character;
 
 use Application\Infrastructure\Client\CharacterRepository;
 use Application\Script\Common\CharacterTrait;
-use Application\Task\Task\Gathering as GatheringService;
-use Application\Task\TaskHandler;
+use Application\Service\Renderer\CharacterRenderer;
 use Eureka\Component\Console\AbstractScript;
-use Eureka\Component\Console\Help;
 use Eureka\Component\Console\Option\Option;
 use Eureka\Component\Console\Option\Options;
 use Psr\Http\Client\ClientExceptionInterface;
+use Velkuns\ArtifactsMMO\Client\CharactersClient;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOClientException;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;
+use Velkuns\ArtifactsMMO\VO\Body\BodyAddCharacter;
 
 /**
  * @codeCoverageIgnore
  */
-class Gathering extends AbstractScript
+class Create extends AbstractScript
 {
     use CharacterTrait;
 
     public function __construct(
         private readonly CharacterRepository $characterRepository,
-        private readonly TaskHandler $taskHandler,
-        private readonly GatheringService $gathering,
+        private readonly CharactersClient $charactersClient,
     ) {
-        $this->setDescription('Gathering task');
+        $this->setDescription('Create new character');
         $this->setExecutable();
 
         $this->initOptions(
             (new Options())
-                ->add(new Option(shortName: 'n', longName: 'name', description: 'Character name', mandatory: true, hasArgument: true, default: 'natsu'))
-                ->add(new Option(shortName: 'r', longName: 'resource', description: 'Resource code to gather', mandatory: true, hasArgument: true, default: null))
-                ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of the resource to gather', mandatory: true, hasArgument: true, default: 1))
+                ->add(new Option(shortName: 'n', longName: 'name', description: 'Character name', mandatory: true, hasArgument: true, default: ''))
+                ->add(new Option(shortName: 's', longName: 'skin', description: 'Character skin (men1, men2, men3, woman1, woman2, woman3', mandatory: true, hasArgument: true, default: ''))
                 ->add(new Option(shortName: null, longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
     }
@@ -56,12 +54,12 @@ class Gathering extends AbstractScript
      */
     public function run(): void
     {
-        $resource = (string) $this->options()->value('r', 'resource');
-        $quantity = (int) $this->options()->value('q', 'quantity');
+        $name = (string) $this->options()->value('n', 'name');
+        $skin = (string) $this->options()->value('s', 'skin');
+
+        $this->charactersClient->createCharacter(new BodyAddCharacter($name, $skin));
 
         $character = $this->getCharacter($this->options(), $this->characterRepository);
-        $task      = $this->gathering->createTaskForDrop($character, $resource, $quantity);
-
-        $this->taskHandler->handle($character, $task, $this->isSimulation($this->options()));
+        echo (new CharacterRenderer())->render($character);
     }
 }

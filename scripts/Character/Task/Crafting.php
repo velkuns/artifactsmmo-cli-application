@@ -46,18 +46,8 @@ class Crafting extends AbstractScript
                 ->add(new Option(shortName: 'i', longName: 'item', description: 'Item code to craft', mandatory: true, hasArgument: true, default: null))
                 ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of the resource to gather', mandatory: true, hasArgument: true, default: 1))
                 ->add(new Option(shortName: 'e', longName: 'equip', description: 'Equip the element crafted', mandatory: false, hasArgument: false, default: false))
-                ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
+                ->add(new Option(shortName: null, longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
-    }
-
-    public function help(): void
-    {
-        (new Help(
-            substr(self::class, (int) strrpos(self::class, '\\') + 1),
-            $this->declaredOptions(),
-            $this->output(),
-            $this->options(),
-        ))->display();
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Entity;
 
 use Application\Enum\Slot;
+use Application\Infrastructure\Client\GrandExchangeRepository;
 use Application\Service\Waiter;
 use Application\VO\Cooldown;
 use Application\VO\Effect\Attack;
@@ -21,15 +22,11 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Velkuns\ArtifactsMMO\Client\MyClient;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOClientException;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;
-use Velkuns\ArtifactsMMO\VO\Body\BodyCrafting;
-use Velkuns\ArtifactsMMO\VO\Body\BodyDepositWithdrawGold;
-use Velkuns\ArtifactsMMO\VO\Body\BodyDestination;
-use Velkuns\ArtifactsMMO\VO\Body\BodyEquip;
-use Velkuns\ArtifactsMMO\VO\Body\BodySimpleItem;
-use Velkuns\ArtifactsMMO\VO\Body\BodyUnequip;
 
 class Character
 {
+    use ActionTrait;
+
     public string $skin = '';
 
     public int $hp = 0;
@@ -68,6 +65,7 @@ class Character
     public function __construct(
         public readonly string $name,
         private readonly MyClient $myClient,
+        private readonly GrandExchangeRepository $grandExchangeRepository,
         private readonly ClockInterface $clock,
         private readonly Waiter $waiter,
     ) {}
@@ -130,113 +128,18 @@ class Character
         return max($time, 0);
     }
 
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function equip(Slot $slot, string $code): void
+    protected function getGERepository(): GrandExchangeRepository
     {
-        $this->myClient->actionEquipItem($this->name, new BodyEquip($code, $slot->value));
+        return $this->grandExchangeRepository;
     }
 
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function unequip(Slot $slot): void
+    protected function getMyClient(): MyClient
     {
-        $this->myClient->actionUnequipItem($this->name, new BodyUnequip($slot->value));
+        return $this->myClient;
     }
 
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function move(Position $position): void
+    protected function getName(): string
     {
-        $this->myClient->actionMove($this->name, new BodyDestination($position->x, $position->y));
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function gather(): void
-    {
-        $this->myClient->actionGathering($this->name);
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function craft(string $code, int $quantity): void
-    {
-        $this->myClient->actionCrafting($this->name, new BodyCrafting($code, $quantity));
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function fight(): void
-    {
-        $this->myClient->actionFight($this->name);
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function depositItem(string $code, int $quantity): void
-    {
-        $this->myClient->actionDepositBank($this->name, new BodySimpleItem($code, $quantity));
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function depositGold(int $quantity): void
-    {
-        $this->myClient->actionDepositBankGold($this->name, new BodyDepositWithdrawGold($quantity));
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function withdrawItem(string $code, int $quantity): void
-    {
-        $this->myClient->actionWithdrawBank($this->name, new BodySimpleItem($code, $quantity));
-    }
-
-    /**
-     * @throws ArtifactsMMOComponentException
-     * @throws ClientExceptionInterface
-     * @throws ArtifactsMMOClientException
-     * @throws JsonException
-     */
-    public function withdrawGold(int $quantity): void
-    {
-        $this->myClient->actionWithdrawBankGold($this->name, new BodyDepositWithdrawGold($quantity));
+        return $this->name;
     }
 }

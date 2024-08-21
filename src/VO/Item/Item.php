@@ -36,7 +36,7 @@ class Item
         try {
             $skillType = SkillType::from($this->craft->skill);
         } catch (\TypeError) {
-            return false;
+            throw new \UnexpectedValueException("Skill type '{$this->craft->skill}' is not valid.");
         }
 
         if (!$character->skills->hasLevel($skillType, $this->craft->level)) {

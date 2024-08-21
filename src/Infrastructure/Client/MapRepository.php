@@ -78,4 +78,17 @@ class MapRepository
             throw $this->handleApiException($exception);
         }
     }
+
+    /**
+     * @return Map[]
+     * @throws \Throwable
+     */
+    public function findGrandExchange(): array
+    {
+        try {
+            return $this->client->getAllMaps(['content_type' => 'grand_exchange', 'content_code' => 'grand_exchange']);
+        } catch (\Throwable $exception) {
+            throw $this->handleApiException($exception);
+        }
+    }
 }

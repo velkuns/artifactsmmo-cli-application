@@ -10,34 +10,35 @@ use Application\Infrastructure\Client\MapRepository;
 use Application\VO\Position;
 use Eureka\Component\Console\Option\Options;
 use Eureka\Component\Console\Progress\ProgressBar;
+use Eureka\Component\Console\Terminal\Terminal;
 
 class Waiter
 {
-    public function wait(int $seconds = 0): void
+    public function __construct(private readonly Terminal $terminal) {}
+
+    public function wait(int $seconds = 0, string $label = '', string $endLine = \PHP_EOL): void
     {
-        $this->render($seconds);
+        $this->render($seconds, $label, $endLine);
     }
 
-    public function waitForCooldown(Character $character): void
+    public function waitForCooldown(Character $character, string $label = '', string $endLine = \PHP_EOL): void
     {
         if (!$character->hasCooldown() || $character->getRemainingCooldown() === 0) {
             return;
         }
 
-        $this->render($character->getRemainingCooldown());
+        $this->render($character->getRemainingCooldown(), $label, $endLine);
     }
 
-    private function render(int $seconds): void
+    private function render(int $seconds, string $label, string $endLine): void
     {
-        $progress = new ProgressBar(new Options(), $seconds, 25);
-
         while ($seconds > 0) {
+            $time = \str_pad($seconds . 's', 5);
+            $this->terminal->output()->write("$label ⏱  $time\r");
             sleep(1);
-            $progress->inc();
-            echo $progress->render(\str_pad($seconds . 's', 5)) . "\r";
             $seconds--;
         }
 
-        echo $progress->render("done !\n");
+        $this->terminal->output()->write("$label ⏱  done !$endLine");
     }
 }

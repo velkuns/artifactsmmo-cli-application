@@ -43,18 +43,8 @@ class Fighting extends AbstractScript
                 ->add(new Option(shortName: 'n', longName: 'name', description: 'Character name', mandatory: true, hasArgument: true, default: 'natsu'))
                 ->add(new Option(shortName: 'r', longName: 'monster', description: 'Monster to fight', mandatory: true, hasArgument: true, default: null))
                 ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of monster to fight', mandatory: true, hasArgument: true, default: 1))
-                ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
+                ->add(new Option(shortName: null, longName: 'simulate', description: 'Do a simulation of actions', mandatory: false, hasArgument: false, default: false)),
         );
-    }
-
-    public function help(): void
-    {
-        (new Help(
-            substr(self::class, (int) strrpos(self::class, '\\') + 1),
-            $this->declaredOptions(),
-            $this->output(),
-            $this->options(),
-        ))->display();
     }
 
     /**

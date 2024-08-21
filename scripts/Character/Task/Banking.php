@@ -49,18 +49,8 @@ class Banking extends AbstractScript
                 ->add(new Option(longName: 'all', description: 'Do action on all object', default: false))
                 ->add(new Option(shortName: 'i', longName: 'item', description: 'Item code to deposit or withdraw', hasArgument: true, default: ''))
                 ->add(new Option(shortName: 'q', longName: 'quantity', description: 'Quantity of monster to fight', mandatory: true, hasArgument: true, default: 1))
-                ->add(new Option(shortName: 's', longName: 'simulate', description: 'Do a simulation of actions', default: false)),
+                ->add(new Option(shortName: null, longName: 'simulate', description: 'Do a simulation of actions', default: false)),
         );
-    }
-
-    public function help(): void
-    {
-        (new Help(
-            substr(self::class, (int) strrpos(self::class, '\\') + 1),
-            $this->declaredOptions(),
-            $this->output(),
-            $this->options(),
-        ))->display();
     }
 
     /**

@@ -20,10 +20,10 @@ trait ApiErrorTrait
         $httpCode = $this->getHttpCode($exception->getMessage());
 
         return match($httpCode) {
-            404 => new NotFoundException(),
-            486 => new ActionInProgressException(),
-            490 => new AlreadyAtDestinationException(),
-            498 => new CharacterNotFoundException(),
+            404 => new NotFoundException($exception->getMessage()),
+            486 => new ActionInProgressException($exception->getMessage()),
+            490 => new AlreadyAtDestinationException($exception->getMessage()),
+            498 => new CharacterNotFoundException($exception->getMessage()),
             499 => new CooldownException($exception->getMessage()),
             default => $exception,
         };

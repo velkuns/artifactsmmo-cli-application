@@ -6,6 +6,7 @@ namespace Application\Task\Task;
 
 use Application\Infrastructure\Client\ResourceRepository;
 use Application\Task;
+use Application\Task\Condition\InventoryItemMissingCondition;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\MapRepository;
 use Application\Service\Helper\InventoryTrait;
@@ -33,7 +34,11 @@ class Gathering
         $task = $this->handleMove($character, $this->mapRepository->findResource($resource), $task);
 
         //~ Then enqueue main action
-        $action = $this->actionFactory->gather($character, $this->isMissingItem(...), [$drop, $quantity]);
+        $action = $this->actionFactory->gather(
+            $character,
+            $resource,
+            new InventoryItemMissingCondition($drop, $quantity),
+        );
         $task->enqueue($action);
 
         return $task;

@@ -43,6 +43,6 @@ trait CharacterTrait
 
     protected function isSimulation(Options $options): bool
     {
-        return (bool) $options->value('s', 'simulate');
+        return (bool) $options->value('', 'simulate');
     }
 }

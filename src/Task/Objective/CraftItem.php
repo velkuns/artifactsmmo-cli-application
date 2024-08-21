@@ -8,6 +8,7 @@ use Application\Infrastructure\Client\BankRepository;
 use Application\Infrastructure\Client\MonsterRepository;
 use Application\Service\Helper\BankTrait;
 use Application\Service\Helper\InventoryTrait;
+use Application\Service\Renderer\ObjectiveRenderer;
 use Application\Task;
 use Application\Entity\Character;
 use Application\Infrastructure\Client\ItemRepository;
@@ -24,6 +25,7 @@ class CraftItem
     use InventoryTrait;
 
     public function __construct(
+        private readonly ObjectiveRenderer $renderer,
         private readonly ItemRepository $itemRepository,
         private readonly MonsterRepository $monsterRepository,
         private readonly BankRepository $bankRepository,
@@ -31,14 +33,25 @@ class CraftItem
         private readonly Task\Task\Crafting $crafting,
         private readonly Task\Task\Banking $banking,
         private readonly Task\Task\Equipping $equipping,
+        private readonly Task\Task\Exchanging $exchanging,
         private readonly Fighting $fighting,
-    ) {}
+    ) {
+        $this->renderer->displayTitle('Objective: CraftItem');
+    }
 
     /**
      * @throws \Throwable
      */
-    public function createObjective(Character $character, string $code, int $quantity, bool $doEquip = false): Task\Objective
-    {
+    public function createObjective(
+        Character $character,
+        string $code,
+        int $quantity,
+        bool $doEquip = false,
+        bool $doSell = false,
+    ): Task\Objective {
+        $this->renderer->displaySubTitle('Preparing Objective');
+        $this->renderer->stateInProgress('Computing task...');
+
         $objective = new Task\Objective();
 
         $item = $this->itemRepository->findItem(Item::class, $code);
@@ -101,6 +114,13 @@ class CraftItem
             $objective->enqueue($this->equipping->createTask($character, $code, true));
         }
 
+        //~ And equip if necessary
+        if ($doSell) {
+            $objective->enqueue($this->exchanging->createSellTask($character, $code, $quantity));
+        }
+
+        $this->renderer->stateDone();
+
         return $objective;
     }
 
@@ -154,7 +174,7 @@ class CraftItem
      */
     private function handleCraft(Character $character, Item $item, int $quantity, Task\Objective $objective): void
     {
-        if ($item->type === 'resource' && $item->subType === 'mining') {
+        if ($item->type === 'resource' && \in_array($item->subType, ['mining', 'woodcutting', ''])) {
             $objective->unshift($this->gathering->createTaskForDrop($character, $item->code, $quantity));
         }
     }

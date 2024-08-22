@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Service\Renderer;
 
+use Application\Disciplines\Disciplines;
 use Application\Entity\Character;
 use Application\VO\Elements;
 use Application\VO\Item\Weapon;
@@ -17,15 +18,15 @@ class CharacterRenderer
     public function render(Character $character): string
     {
         return
-            "--------------------------------------------------\n" .
-            "Name: $character->name - $character->hp ❤️ - 🗺️: ({$character->position->x}, {$character->position->y})\n" .
-            "--------------------------------------------------\n" .
+            "------------------------------------------------------------------------\n" .
+            "Name: $character->name {$this->disciplines($character->disciplines)} - $character->hp ❤️ - 🗺️: ({$character->position->x}, {$character->position->y})\n" .
+            "------------------------------------------------------------------------\n" .
             $this->skills($character->skills) .
-            "--------------------------------------------------\n" .
+            "-----------------------------------------\n" .
             "Attack:     {$this->element($character->attack)}\n" .
             "Resistance: {$this->element($character->resistance, '%')}\n" .
             "Damage:     {$this->element($character->damage, '%')}\n" .
-            "--------------------------------------------------\n" .
+            "-----------------------------------------\n" .
             "{$this->weapon($character->weapon)}\n"
         ;
     }
@@ -81,5 +82,10 @@ class CharacterRenderer
             ->inc($skill->xp)
             ->render("$skill->xp / $skill->maxXp")
         ;
+    }
+
+    public function disciplines(Disciplines $disciplines): string
+    {
+        return "[{$disciplines->main->getName()}]";
     }
 }

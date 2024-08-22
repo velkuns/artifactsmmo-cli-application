@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace Application\Task\Action;
 
 use Application\Entity\Character;
-use Application\Exception\AlreadyAtDestinationException;
 use Application\Infrastructure\Client\CharacterRepository;
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Application\Service\Waiter;
 use Application\Task\Condition\Condition;
 use Eureka\Component\Console\Terminal\Terminal;
+use Velkuns\ArtifactsMMO\Exception\Api\CharacterAlreadyAtDestinationException;
 
 abstract class Action
 {
-    use ApiErrorTrait;
-
     /**
      * @param array<mixed> $arguments
      * @param array<mixed> $context Context for rendering
@@ -72,16 +69,12 @@ abstract class Action
                 $text = $this->render($character, '✅');
                 $output->write("$text\r");
 
+            } catch (CharacterAlreadyAtDestinationException) {
+                $text = $this->render($character, '⏩');
+                $output->write("$text\r");
+                continue;
             } catch (\Throwable $exception) {
-                $exception = $this->handleApiException($exception);
-                if ($exception instanceof AlreadyAtDestinationException) {
-                    $text = $this->render($character, '✅');
-                    $output->write("$text\r");
-                    continue;
-                }
-
                 $output->writeln($this->render($character, '❎'));
-
                 throw $exception;
             }
         } while ($this->repeatable($character));

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Application\Infrastructure\Client;
 
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Application\Service\Helper\ItemEffectTrait;
 use Application\Service\Helper\ItemTrait;
 use Application\VO\Item;
@@ -12,34 +11,39 @@ use Velkuns\ArtifactsMMO\Client\ItemsClient;
 
 class ItemRepository
 {
-    use ApiErrorTrait;
     use ItemTrait;
     use ItemEffectTrait;
 
     public function __construct(private readonly ItemsClient $client) {}
 
     /**
-     * @return list<Item\Item>
+     * @return Item\Item[]
      * @throws \Throwable
      */
-    public function findAllCraftableItem(string $craftSkill, int $maxLevel): array
-    {
+    public function findAllCraftableItem(
+        string $craftSkill,
+        int $maxLevel,
+        int $minLevel = 0,
+        string $craftMaterial = '',
+    ): array {
         $items = [];
 
         if (empty($craftSkill)) {
             return $items;
         }
 
-        try {
-            $data = $this->client->getAllItems(['craft_skill' => $craftSkill, 'max_level' => $maxLevel]);
-            foreach ($data as $item) {
-                $items[] = $this->newItem(Item\Item::class, $item);
-            }
-
-            return $items;
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
+        $query = \array_filter([
+            'craft_skill' => $craftSkill,
+            'craft_material' => $craftMaterial,
+            'min_level' => $minLevel,
+            'max_level' => $maxLevel,
+        ]);
+        $data = $this->client->getAllItems($query);
+        foreach ($data as $item) {
+            $items[] = $this->newItem(Item\Item::class, $item);
         }
+
+        return $items;
     }
 
     /**
@@ -54,12 +58,8 @@ class ItemRepository
             return null;
         }
 
-        try {
-            $data = $this->client->getItem($code);
-            return $this->newItem($itemClass, $data->item);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        $data = $this->client->getItem($code);
+        return $this->newItem($itemClass, $data->item);
     }
 
     /**

@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Application\Infrastructure\Client;
 
 use Application\Entity\Character;
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Velkuns\ArtifactsMMO\Client\MonstersClient;
 use Velkuns\ArtifactsMMO\VO\Monster;
 
 class MonsterRepository
 {
-    use ApiErrorTrait;
-
     public function __construct(private readonly MonstersClient $client) {}
 
     /**
@@ -22,11 +19,7 @@ class MonsterRepository
      */
     public function findAll(array $query = []): array
     {
-        try {
-            return $this->client->getAllMonsters($query);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMonsters($query);
     }
 
     /**
@@ -34,11 +27,7 @@ class MonsterRepository
      */
     public function find(string $code): Monster
     {
-        try {
-            return $this->client->getMonster($code);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getMonster($code);
     }
 
     /**

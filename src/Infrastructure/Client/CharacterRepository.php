@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Application\Infrastructure\Client;
 
+use Application\Disciplines\Discipline;
+use Application\Disciplines\Discipline\Armorsmith;
+use Application\Disciplines\Discipline\Chef;
+use Application\Disciplines\Discipline\Jeweler;
+use Application\Disciplines\Discipline\Weaponsmith;
+use Application\Disciplines\Disciplines;
 use Application\Entity\Character;
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Application\Service\Helper\ItemEffectTrait;
 use Application\Service\Helper\ItemTrait;
 use Application\Service\Waiter;
@@ -28,9 +33,17 @@ use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;
 
 class CharacterRepository
 {
-    use ApiErrorTrait;
     use ItemTrait;
     use ItemEffectTrait;
+
+    /** @var array<string, array{0: class-string<Discipline>, 1: class-string<Discipline>|null}> */
+    private const CHARACTERS = [
+        'natsu'    => [Armorsmith::class, null],
+        'jubia'    => [Weaponsmith::class, null],
+        'titania'  => [Armorsmith::class, null],
+        'mirajane' => [Chef::class, null],
+        'zeleph'   => [Jeweler::class, null],
+    ];
 
     public function __construct(
         private readonly CharactersClient $charactersClient,
@@ -136,8 +149,21 @@ class CharacterRepository
         //~ Task
         // TO DO
 
+        //~ Disciplines
+        $character->disciplines = $this->getDisciplines($name);
+
 
         return $character;
     }
 
+    private function getDisciplines(string $name): Disciplines
+    {
+        /**
+         * @var class-string<Discipline> $main
+         * @var class-string<Discipline>|null $secondary
+         */
+        [$main, $secondary] = self::CHARACTERS[$name];
+
+        return new Disciplines(new $main(), ($secondary !== null ? new $secondary() : null));
+    }
 }

@@ -26,10 +26,34 @@ class ObjectiveHandler
      */
     public function handle(Character $character, Objective $objective, bool $simulate): void
     {
-        $this->renderer->displaySubTitle('Doing task for objective' . ($simulate ? ' - SIMULATION' : ''));
-        while (!$objective->isEmpty()) {
-            $task = $objective->dequeue();
-            $this->taskHandler->handle($character, $task, $simulate);
+        $repeatable = $objective->repeatable($character);
+
+        do {
+            $this->renderer->displaySubTitle('Doing task for objective' . ($repeatable ? ' 🔁 ' : '') . ($simulate ? ' - SIMULATION' : ''));
+
+            $repeatObjective = $objective->new();
+            while (!$objective->isEmpty()) {
+                $task = $objective->dequeue();
+                $repeatObjective->enqueue(clone $task);
+
+                $this->taskHandler->handle($character, $task, $simulate);
+            }
+            $objective = $repeatObjective;
+        } while ($objective->repeatable($character) && $simulate === false);
+    }
+
+    /**
+     * @throws \Throwable
+     * @throws ArtifactsMMOComponentException
+     * @throws ClientExceptionInterface
+     * @throws ArtifactsMMOClientException
+     * @throws \JsonException
+     */
+    public function handleMultiple(Character $character, Objectives $objectives, bool $simulate): void
+    {
+        while (!$objectives->isEmpty()) {
+            $objective = $objectives->dequeue();
+            $this->handle($character, $objective, $simulate);
         }
     }
 }

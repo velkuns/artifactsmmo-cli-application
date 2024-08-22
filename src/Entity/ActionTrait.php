@@ -6,18 +6,8 @@ namespace Application\Entity;
 
 use Application\Enum\Slot;
 use Application\Infrastructure\Client\GrandExchangeRepository;
-use Application\Service\Waiter;
-use Application\VO\Cooldown;
-use Application\VO\Effect\Attack;
-use Application\VO\Effect\Damage;
-use Application\VO\Effect\Resistance;
-use Application\VO\Equipment;
-use Application\VO\Inventory;
-use Application\VO\Item\Weapon;
 use Application\VO\Position;
-use Application\VO\Skill\Skills;
 use JsonException;
-use Psr\Clock\ClockInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Velkuns\ArtifactsMMO\Client\MyClient;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOClientException;

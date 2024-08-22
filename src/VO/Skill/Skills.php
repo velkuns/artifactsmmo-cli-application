@@ -17,9 +17,24 @@ class Skills
     public Skill $gearCrafting;
     public Skill $jewelryCrafting;
 
+    public function getLevel(SkillType $skillType): int
+    {
+        return match ($skillType) {
+            SkillType::Combat          => $this->combat->level,
+            SkillType::Cooking         => $this->cooking->level,
+            SkillType::Fishing         => $this->fishing->level,
+            SkillType::Mining          => $this->mining->level,
+            SkillType::WoodCutting     => $this->woodCutting->level,
+            SkillType::WeaponCrafting  => $this->weaponCrafting->level,
+            SkillType::GearCrafting    => $this->gearCrafting->level,
+            SkillType::JewelryCrafting => $this->jewelryCrafting->level,
+        };
+    }
+
     public function hasLevel(SkillType $skillType, int $level): bool
     {
         return match ($skillType) {
+            SkillType::Combat          => $this->combat->level >= $level,
             SkillType::Cooking         => $this->cooking->level >= $level,
             SkillType::Fishing         => $this->fishing->level >= $level,
             SkillType::Mining          => $this->mining->level >= $level,

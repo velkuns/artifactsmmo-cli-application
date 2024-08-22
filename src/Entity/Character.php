@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Entity;
 
+use Application\Disciplines\Disciplines;
 use Application\Enum\Slot;
 use Application\Infrastructure\Client\GrandExchangeRepository;
 use Application\Service\Waiter;
@@ -36,6 +37,8 @@ class Character
     public int $speed = 0;
     public int $criticalStrike = 0;
     public int $stamina = 0;
+
+    public Disciplines $disciplines;
 
     public Attack $attack;
     public Resistance $resistance;

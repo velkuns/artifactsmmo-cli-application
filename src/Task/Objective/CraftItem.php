@@ -35,9 +35,7 @@ class CraftItem
         private readonly Task\Task\Equipping $equipping,
         private readonly Task\Task\Exchanging $exchanging,
         private readonly Fighting $fighting,
-    ) {
-        $this->renderer->displayTitle('Objective: CraftItem');
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -48,7 +46,9 @@ class CraftItem
         int $quantity,
         bool $doEquip = false,
         bool $doSell = false,
+        bool $doStore = false,
     ): Task\Objective {
+        $this->renderer->displayTitle('Objective: CraftItem');
         $this->renderer->displaySubTitle('Preparing Objective');
         $this->renderer->stateInProgress('Computing task...');
 
@@ -114,9 +114,14 @@ class CraftItem
             $objective->enqueue($this->equipping->createTask($character, $code, true));
         }
 
-        //~ And equip if necessary
+        //~ Sell if necessary
         if ($doSell) {
             $objective->enqueue($this->exchanging->createSellTask($character, $code, $quantity));
+        }
+
+        //~ Sell if necessary
+        if ($doStore) {
+            $objective->enqueue($this->banking->createDepositItemTask($character, $code, $quantity));
         }
 
         $this->renderer->stateDone();

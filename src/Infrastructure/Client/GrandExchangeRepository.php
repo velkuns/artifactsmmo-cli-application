@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Application\Infrastructure\Client;
 
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Application\Service\Helper\ItemEffectTrait;
 use Application\Service\Helper\ItemTrait;
 use Application\VO\Item;
@@ -12,7 +11,6 @@ use Velkuns\ArtifactsMMO\Client\GeClient;
 
 class GrandExchangeRepository
 {
-    use ApiErrorTrait;
     use ItemTrait;
     use ItemEffectTrait;
 
@@ -23,12 +21,8 @@ class GrandExchangeRepository
      */
     public function find(string $code): Item\GeItem
     {
-        try {
-            $data = $this->client->getGeItem($code);
-            return new Item\GeItem($data->code, $data->stock, $data->sellPrice ?? 0, $data->buyPrice ?? 0);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        $data = $this->client->getGeItem($code);
+        return new Item\GeItem($data->code, $data->stock, $data->sellPrice ?? 0, $data->buyPrice ?? 0);
     }
 
     /**
@@ -37,15 +31,11 @@ class GrandExchangeRepository
      */
     public function findAll(): array
     {
-        try {
-            $collection = $this->client->getAllGeItems();
-            $items      = [];
-            foreach ($collection as $data) {
-                $items[] = new Item\GeItem($data->code, $data->stock, $data->sellPrice ?? 0, $data->buyPrice ?? 0);
-            }
-            return $items;
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
+        $collection = $this->client->getAllGeItems();
+        $items      = [];
+        foreach ($collection as $data) {
+            $items[] = new Item\GeItem($data->code, $data->stock, $data->sellPrice ?? 0, $data->buyPrice ?? 0);
         }
+        return $items;
     }
 }

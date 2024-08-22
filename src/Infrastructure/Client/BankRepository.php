@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Application\Infrastructure\Client;
 
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Velkuns\ArtifactsMMO\Client\MyClient;
@@ -14,8 +13,6 @@ use Velkuns\ArtifactsMMO\VO\SimpleItem;
 
 class BankRepository
 {
-    use ApiErrorTrait;
-
     public function __construct(
         private readonly MyClient $myClient,
     ) {}
@@ -46,11 +43,7 @@ class BankRepository
      */
     public function getItem(string $code): array
     {
-        try {
-            return $this->myClient->getBankItems(['item_code' => $code]);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->myClient->getBankItems(['item_code' => $code]);
     }
 
     /**
@@ -64,11 +57,7 @@ class BankRepository
      */
     public function getItems(): array
     {
-        try {
-            return $this->myClient->getBankItems();
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->myClient->getBankItems();
     }
 
 }

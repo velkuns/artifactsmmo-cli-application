@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Application\Infrastructure\Client;
 
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Velkuns\ArtifactsMMO\Client\MapsClient;
 use Velkuns\ArtifactsMMO\VO\Map;
 
 class MapRepository
 {
-    use ApiErrorTrait;
-
     public function __construct(private readonly MapsClient $client) {}
 
     /**
@@ -20,11 +17,7 @@ class MapRepository
      */
     public function findAllResources(): array
     {
-        try {
-            return $this->client->getAllMaps(['content_type' => 'resource']);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMaps(['content_type' => 'resource']);
     }
 
     /**
@@ -33,11 +26,7 @@ class MapRepository
      */
     public function findResource(string $code): array
     {
-        try {
-            return $this->client->getAllMaps(['content_type' => 'resource', 'content_code' => $code]);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMaps(['content_type' => 'resource', 'content_code' => $code]);
     }
 
     /**
@@ -46,11 +35,7 @@ class MapRepository
      */
     public function findMonster(string $code): array
     {
-        try {
-            return $this->client->getAllMaps(['content_type' => 'monster', 'content_code' => $code]);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMaps(['content_type' => 'monster', 'content_code' => $code]);
     }
 
     /**
@@ -59,11 +44,7 @@ class MapRepository
      */
     public function findBank(): array
     {
-        try {
-            return $this->client->getAllMaps(['content_type' => 'bank', 'content_code' => 'bank']);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMaps(['content_type' => 'bank', 'content_code' => 'bank']);
     }
 
     /**
@@ -72,11 +53,7 @@ class MapRepository
      */
     public function findWorkshop(string $code): array
     {
-        try {
-            return $this->client->getAllMaps(['content_type' => 'workshop', 'content_code' => $code]);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMaps(['content_type' => 'workshop', 'content_code' => $code]);
     }
 
     /**
@@ -85,10 +62,6 @@ class MapRepository
      */
     public function findGrandExchange(): array
     {
-        try {
-            return $this->client->getAllMaps(['content_type' => 'grand_exchange', 'content_code' => 'grand_exchange']);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllMaps(['content_type' => 'grand_exchange', 'content_code' => 'grand_exchange']);
     }
 }

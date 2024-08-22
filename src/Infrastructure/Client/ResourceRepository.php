@@ -6,14 +6,11 @@ namespace Application\Infrastructure\Client;
 
 use Application\Entity\Character;
 use Application\Enum\SkillType;
-use Application\Infrastructure\Helper\ApiErrorTrait;
 use Velkuns\ArtifactsMMO\Client\ResourcesClient;
 use Velkuns\ArtifactsMMO\VO\Resource;
 
 class ResourceRepository
 {
-    use ApiErrorTrait;
-
     public function __construct(private readonly ResourcesClient $client) {}
 
     /**
@@ -23,11 +20,7 @@ class ResourceRepository
      */
     public function findAll(array $query = []): array
     {
-        try {
-            return $this->client->getAllResources($query);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getAllResources($query);
     }
 
     /**
@@ -35,11 +28,7 @@ class ResourceRepository
      */
     public function find(string $code): Resource
     {
-        try {
-            return $this->client->getResource($code);
-        } catch (\Throwable $exception) {
-            throw $this->handleApiException($exception);
-        }
+        return $this->client->getResource($code);
     }
 
     /**

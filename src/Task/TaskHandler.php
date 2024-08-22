@@ -6,8 +6,6 @@ namespace Application\Task;
 
 use Application\Task\Action\Action;
 use Application\Entity\Character;
-use Application\Exception\CooldownException;
-use Application\Service\Waiter;
 use Psr\Http\Client\ClientExceptionInterface;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOClientException;
 use Velkuns\ArtifactsMMO\Exception\ArtifactsMMOComponentException;

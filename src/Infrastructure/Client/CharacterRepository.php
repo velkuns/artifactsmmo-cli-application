@@ -39,8 +39,8 @@ class CharacterRepository
     /** @var array<string, array{0: class-string<Discipline>, 1: class-string<Discipline>|null}> */
     private const CHARACTERS = [
         'natsu'    => [Armorsmith::class, null],
-        'jubia'    => [Weaponsmith::class, null],
-        'titania'  => [Armorsmith::class, null],
+        'jubia'    => [Armorsmith::class, null],
+        'titania'  => [Weaponsmith::class, null],
         'mirajane' => [Chef::class, null],
         'zeleph'   => [Jeweler::class, null],
     ];

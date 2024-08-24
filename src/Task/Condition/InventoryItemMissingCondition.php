@@ -12,7 +12,7 @@ class InventoryItemMissingCondition implements Condition
 
     public function isValid(Character $character): bool
     {
-        $count     = $character->inventory->countItem($this->code);
+        $count = $character->inventory->countItem($this->code);
         return $count < $this->quantity;
     }
 

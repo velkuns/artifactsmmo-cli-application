@@ -9,6 +9,7 @@ use Application\Service\Waiter;
 use Application\Task\Action\Action;
 use Application\Task\Action\Buy;
 use Application\Task\Action\Craft;
+use Application\Task\Action\Fight;
 use Application\Task\Action\Gather;
 use Application\Entity\Character;
 use Application\Task\Action\Move;
@@ -59,6 +60,22 @@ class ActionFactory
             $character->gather(...),
             repeatableCondition: $repeatableCondition,
             context: [$resource],
+        );
+    }
+
+    public function fight(
+        Character $character,
+        string $monster,
+        string $drop,
+        Condition|null $repeatableCondition = null,
+    ): Fight {
+        return new Fight(
+            $this->terminal,
+            $this->waiter,
+            $this->characterRepository,
+            $character->fight(...),
+            repeatableCondition: $repeatableCondition,
+            context: [$monster, $drop],
         );
     }
 

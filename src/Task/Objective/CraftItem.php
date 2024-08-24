@@ -190,8 +190,8 @@ class CraftItem
     private function handleFight(Character $character, Item $item, int $quantity, Task\Objective $objective): void
     {
         if ($item->type === 'resource' && $item->subType === 'mob') {
-            $resource = $this->monsterRepository->findBestByDrop($item->code, $character);
-            $objective->unshift($this->fighting->createTask($character, $resource->code, $quantity));
+            $monster = $this->monsterRepository->findBestByDrop($item->code, $character);
+            $objective->unshift($this->fighting->createTask($character, $monster->code, $item->code, $quantity));
         }
     }
 }
